@@ -8,14 +8,17 @@ class Client:
         self.connection = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
         #self.connection.bind()
 
-        Thread(target=self.received(),args=()).start()
+        Thread(target=self.received,args=()).start()
+        print("# # # SEJA BEM-VINDO AO QUIZ RACHA-CUCA # # #\n")
+        print("@ para jogar, digite 'jogar'")
 
         while True:
-            self.msg = input('digite sua mensagem:')
-            self.connection.sendto(self.msg.decode(), self.addr)
-
+            self.msg = input('\n> ')
+            self.connection.sendto(self.msg.encode(), self.addr)
     
-    def received (self):
+    def received(self):
         while True:
-            self.connection.recvfrom(1024)
-            print(f'servidor mandou: {self.connection[0].decode()}')
+            resposta = self.connection.recvfrom(1024)
+            print(f'servidor mandou: {resposta[0].decode()}')
+
+c = Client()
