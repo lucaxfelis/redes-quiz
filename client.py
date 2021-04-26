@@ -6,7 +6,7 @@ class Client:
     def __init__(self,ip='localhost',port=3000):
         self.addr= (ip,port)
         self.connection = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
-        self.connection.bind()
+        #self.connection.bind()
 
         Thread(target=self.received(),args=()).start()
 
