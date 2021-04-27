@@ -1,24 +1,38 @@
-import socket
+import time
+import sys
+from socket import socket, AF_INET, SOCK_DGRAM, SHUT_RDWR, timeout
 from threading import Thread
 
 class Client:
 
-    def __init__(self,ip='localhost',port=3000):
-        self.addr= (ip,port)
-        self.connection = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
-        #self.connection.bind()
+    def __init__(self,ip='localhost', server_port=3000):
+        server_addr = (ip, server_port)
+        self.socket = socket(AF_INET, SOCK_DGRAM)
+        self.__running = False
 
-        Thread(target=self.received,args=()).start()
         print("# # # SEJA BEM-VINDO AO QUIZ RACHA-CUCA # # #\n")
         print("@ para jogar, digite 'jogar'")
 
-        while True:
-            self.msg = input('\n> ')
-            self.connection.sendto(self.msg.encode(), self.addr)
+        Thread(target=self.receiving ,args=()).start()
+        try:
+            while True:
+                msg = input('')
+                self.socket.sendto(msg.encode(), server_addr)
+        except(KeyboardInterrupt, SystemExit):
+            self.__running = False
+        
+        self.socket.close()
     
-    def received(self):
-        while True:
-            resposta = self.connection.recvfrom(1024)
-            print(f'servidor mandou: {resposta[0].decode()}')
+    def receiving(self):
+        self.__running = True
 
-c = Client()
+        while self.__running:
+            try:
+                response_msg, client_addr = self.socket.recvfrom(1024)
+                print(response_msg.decode())
+                print()
+            except:
+                self.__running = False
+                break
+
+Client()

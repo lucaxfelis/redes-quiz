@@ -75,11 +75,11 @@ class Quiz:
 
         for x in range(0,self.questions_num):
             if self.sequencia[x] == 0:
-                self.pergunta = f'Qual a capital do estado {self.respostas[x][0]}: ______________ ?'
+                self.pergunta = f'Qual a capital do estado {self.respostas[x][0]}?'
                 self.questionario.append(self.pergunta)
                 self.gabarito.append(self.respostas[x][1])
             else:
-                self.pergunta = f'Qual a estado tem a capital {self.respostas[x][1]}: ______________ ?'
+                self.pergunta = f'Qual a estado tem a capital {self.respostas[x][1]}?'
                 self.questionario.append(self.pergunta)
                 self.gabarito.append(self.respostas[x][0])
 
