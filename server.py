@@ -1,5 +1,6 @@
 import socket
 import time
+import unicodedata
 from threading import Thread
 from quiz import *
 
@@ -71,7 +72,7 @@ class Room:
         
         for round in range(rounds):
             question, right_answer = quiz.get_question()
-            print(f"\n# # # # PERGUNTA {round + 1} # # # #")
+            question = f"\n# # # # PERGUNTA {round + 1} # # # #\n" + question
             print(question)
             self.broadcast(question)
             
@@ -92,12 +93,12 @@ class Room:
         while not_right:
             
             received = self.server.connection.recvfrom(1024)
-            guess = received[0].decode()
+            guess = self.get_unicode_str(received[0].decode())
             client_addr = received[1][1]
             if client_addr in self.players_list:
                 answer_table[str(client_addr)] = 0
 
-                if guess == right_answer:
+                if guess == self.get_unicode_str(right_answer):
                     print(f"O jogador {self.players_position[str(client_addr)]} acertou!")
                     self.server.send("Você acertou e ganhou 25 pontos!", client_addr)
                     self.ranking[str(client_addr)] += 25
@@ -124,4 +125,9 @@ class Room:
             result += f"|  Jogador {self.players_position[player]}  |{str(score).center(6)}|\n"
         return result
 
-r = Room()
+    def get_unicode_str(self, string):
+        string_nova = ''.join(ch for ch in unicodedata.normalize('NFKD', string) 
+        if not unicodedata.combining(ch))
+        return string_nova.lower()
+
+Room()
